@@ -1,14 +1,28 @@
-function maxEnvelopes(envelopes) {
-  envelopes.sort((a, b) => a[0] - b[0] || b[1] - a[1]);
-  const dp = new Array(envelopes.length).fill(1);
-  let max = 1;
-  for (let i = 1; i < envelopes.length; i++) {
+function largestDivisibleSubset(nums) {
+  nums.sort((a, b) => a - b);
+  const dp = new Array(nums.length).fill(1);
+  let maxSubsetSize = 1;
+  let maxSubsetIdx = 0;
+  for (let i = 1; i < nums.length; i++) {
     for (let j = 0; j < i; j++) {
-      if (envelopes[i][1] > envelopes[j][1]) {
+      if (nums[i] % nums[j] === 0) {
         dp[i] = Math.max(dp[i], dp[j] + 1);
-        max = Math.max(max, dp[i]);
+        if (dp[i] > maxSubsetSize) {
+          maxSubsetSize = dp[i];
+          maxSubsetIdx = i;
+        }
       }
     }
   }
-  return max;
+  const result = [];
+  let prev = nums[maxSubsetIdx];
+  let count = maxSubsetSize;
+  for (let i = maxSubsetIdx; i >= 0; i--) {
+    if (prev % nums[i] === 0 && dp[i] === count) {
+      result.unshift(nums[i]);
+      prev = nums[i];
+      count--;
+    }
+  }
+  return result;
 }
